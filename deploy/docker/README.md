@@ -66,7 +66,7 @@ docker compose ps
 只有一台全新的 Linux 云服务器、没有域名时，可以用 [`scripts/install-vps.sh`](./scripts/install-vps.sh) 一次装好。它会做这几件事：没有 Docker 就装上（国内服务器从阿里云镜像下载）；连不上 Docker Hub 或被限流时配置镜像加速；在 `/opt/folia` 下载 `compose.yaml`，生成带随机 `SYNC_TOKEN`、`QQ_SESSION_SECRET` 的 `.env`；然后启动、自检，并放行本机防火墙的网页端口。
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/chthollyphile/folia-major/main/deploy/docker/scripts/install-vps.sh -o install-vps.sh
+curl -fsSL https://raw.githubusercontent.com/<仓库所有者>/folia-major/main/deploy/docker/scripts/install-vps.sh -o install-vps.sh
 sudo bash install-vps.sh
 ```
 
