@@ -1,0 +1,70 @@
+name: iOS IPA
+
+# 编出未签名的 iOS 外壳 App（packaging/ios），给全能签等签名工具导入后安装。
+# App 本身只加载部署好的 Folia 网页版，网页功能的更新跟着服务端走，只有改了 packaging/ios 才需要重新出包。
+# 产物发到 ios-latest 预发布，下载地址固定：
+#   https://github.com/<owner>/<repo>/releases/download/ios-latest/Folia-unsigned.ipa
+# 默认服务端地址按优先级取：手动运行时填的 server_url、仓库变量 FOLIA_IOS_SERVER_URL；都没有时 App 首次打开会让用户填。
+on:
+  push:
+    paths:
+      - packaging/ios/**
+      - .github/workflows/ios-ipa.yml
+  workflow_dispatch:
+    inputs:
+      server_url:
+        description: 写进 App 的默认服务端地址（可留空）
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ios-ipa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build unsigned IPA
+    # Apple 芯片的 macOS 机器经常排不上队（GitHub 标注 capacity constraints，排 15 分钟会被取消），
+    # 默认用 Intel 机器；想换回来在仓库变量里设 FOLIA_IOS_RUNNER=macos-15
+    runs-on: ${{ vars.FOLIA_IOS_RUNNER || 'macos-15-intel' }}
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v6
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Build unsigned IPA
+        env:
+          FOLIA_SERVER_URL: ${{ inputs.server_url || vars.FOLIA_IOS_SERVER_URL || '' }}
+          FOLIA_IOS_BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          xcodebuild -version
+          packaging/ios/build-ipa.sh "$RUNNER_TEMP/ios"
+          cp "$RUNNER_TEMP"/ios/Folia-*-unsigned.ipa "$RUNNER_TEMP/Folia-unsigned.ipa"
+          unzip -l "$RUNNER_TEMP/Folia-unsigned.ipa" > "$RUNNER_TEMP/ipa-files.txt"
+          grep -q 'Payload/Folia.app/Folia$' "$RUNNER_TEMP/ipa-files.txt"
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: Folia-unsigned-ipa
+          path: ${{ runner.temp }}/ios/*.ipa
+          if-no-files-found: error
+
+      - name: Publish ios-latest pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          gh release delete ios-latest --cleanup-tag --yes || true
+          gh release create ios-latest "$RUNNER_TEMP/Folia-unsigned.ipa" \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "Folia iOS $VERSION (${GITHUB_SHA::7})" \
+            --notes "未签名的 iOS 安装包，用全能签等工具签名后安装。说明见 packaging/ios/README.md。"

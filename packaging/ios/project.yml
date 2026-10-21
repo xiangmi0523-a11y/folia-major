@@ -1,0 +1,32 @@
+# XcodeGen 工程描述：packaging/ios/build-ipa.sh 用它生成 Folia.xcodeproj，再编出未签名的 IPA。
+# 生成的 .xcodeproj 不入库，改工程设置改这里。
+name: Folia
+options:
+  bundleIdPrefix: com.folia
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    MARKETING_VERSION: "0.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    # 构建时可选的默认服务端地址，见 build-ipa.sh 的 FOLIA_SERVER_URL
+    FOLIA_DEFAULT_SERVER_URL: ""
+targets:
+  Folia:
+    type: application
+    platform: iOS
+    sources:
+      - path: Folia
+        # Info.plist 由 INFOPLIST_FILE 引用，不能再被当成资源拷进包里
+        excludes:
+          - Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.folia.major
+        PRODUCT_NAME: Folia
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Folia/Info.plist
