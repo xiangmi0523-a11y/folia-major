@@ -164,6 +164,7 @@ Linux 包、Wayland / Hyprland 遥控窗和桌面端细节见 [技术与开发�
 | **PWA（推荐）** | 部署 Web 版本或自托管版本后，在 Chrome for Android / iOS Safari 中将网页添加到主屏幕，即可作为 PWA 应用使用。 |
 | **社区移植版（Android）** | [maimai993/folia-sonnet](https://github.com/maimai993/folia-sonnet) · [whycfawa/folia-android](https://github.com/whycfawa/folia-android) |
 | **自行打包（Android）** | 有一定技术基础的用户可以用 Capacitor 将 Web 版本打包为可安装的 APK，参考示范仓库 [chthollyphile/folia-sonnet](https://github.com/chthollyphile/folia-sonnet)。 |
+| **自签安装包（iOS）** | GitHub Actions 编出未签名的 IPA，用全能签等工具签名后安装；App 打开你部署好的 Web 版本。见 [iOS 安装包说明](packaging/ios/README.md)。 |
 
 > [!NOTE]
 > 社区移植版均为第三方项目，由社区自发维护，功能会与官方 PC 版存在差异。使用中遇到问题请反馈到对应的社区仓库。

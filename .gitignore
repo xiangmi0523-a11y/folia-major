@@ -96,3 +96,7 @@ __pycache__/
 
 # Built by build/buildPythonRuntime.mjs - binary artifacts that live on the mirrors, not in git.
 dist-runtime/
+
+# iOS 外壳：XcodeGen 生成的工程和 xcodebuild 产物
+packaging/ios/Folia.xcodeproj/
+packaging/ios/build/
