@@ -27,7 +27,9 @@ concurrency:
 jobs:
   build:
     name: Build unsigned IPA
-    runs-on: macos-15
+    # Apple 芯片的 macOS 机器经常排不上队（GitHub 标注 capacity constraints，排 15 分钟会被取消），
+    # 默认用 Intel 机器；想换回来在仓库变量里设 FOLIA_IOS_RUNNER=macos-15
+    runs-on: ${{ vars.FOLIA_IOS_RUNNER || 'macos-15-intel' }}
     timeout-minutes: 30
 
     steps:
