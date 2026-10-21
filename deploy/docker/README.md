@@ -61,6 +61,17 @@ docker compose ps
 
 当前健康检查入口分别是 gateway 的 `/healthz`、`/api/healthz`、`/runtime-config.js`、`/netease/`、`/kugou/`、`/qq/login/status`，以及 Sync Server 的 `/health`。本地镜像验证脚本 `scripts/smoke-test.sh` 会检查这些路径、`/api/segment-lyrics` 的可达性和网络隔离。
 
+### 一键安装脚本（Linux 云服务器）
+
+只有一台全新的 Linux 云服务器、没有域名时，可以用 [`scripts/install-vps.sh`](./scripts/install-vps.sh) 一次装好。它会做这几件事：没有 Docker 就装上（国内服务器从阿里云镜像下载）；连不上 Docker Hub 或被限流时配置镜像加速；在 `/opt/folia` 下载 `compose.yaml`，生成带随机 `SYNC_TOKEN`、`QQ_SESSION_SECRET` 的 `.env`；然后启动、自检，并放行本机防火墙的网页端口。
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/chthollyphile/folia-major/main/deploy/docker/scripts/install-vps.sh -o install-vps.sh
+sudo bash install-vps.sh
+```
+
+装完用 `http://服务器公网IP:18080` 访问；云服务商控制台的安全组还要自己放行 TCP 18080。脚本生成的 `.env` 让 Sync Server 只在本机监听，QQ 登录态会跨重启保存。重复运行时保留已有的 `.env`，只更新 `compose.yaml` 和镜像。国内服务器上默认的加速站都不可用时，用 `FOLIA_REGISTRY_MIRROR=https://你的加速地址 sudo -E bash install-vps.sh` 指定。
+
 ## 环境变量
 
 | 变量 | 默认值 | 用途 |

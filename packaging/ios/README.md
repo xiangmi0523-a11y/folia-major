@@ -13,6 +13,8 @@ App 里不带音乐接口，网易云、QQ 音乐、酷狗的请求都由服务�
 | **Docker 全栈（推荐）** | 有 VPS 或 NAS | 网页、网易云、QQ 音乐、酷狗接口一次全部起好，扫码登录和导入歌单最稳。步骤见 [`deploy/docker/README.md`](../../deploy/docker/README.md) |
 | Vercel / Cloudflare | 没有服务器 | 一键部署网页版，但网易云接口要另外部署一个实例，再把地址填进 `VITE_NETEASE_API_BASE`。见项目 README 的“一键部署” |
 
+只有一台 Linux 云服务器、没有域名的话，用一键安装脚本最省事，见 [`deploy/docker/README.md`](../../deploy/docker/README.md) 的“一键安装脚本”。
+
 部署完先在手机 Safari 里打开这个地址，确认能登录、能看到歌单，再装 App。
 
 几点建议：
